@@ -88,6 +88,9 @@
                                 min="0" max="255" value="255" step="9"
                                 onchange="editOpacity()">
                         </div>
+                        <h5>Viewer Settings:</h5>
+                        Background Color:
+                        <input type="text" value="#ffffff" onchange="refresh(this.value);">
                     </div>
                 </div>
                 <div class="col-9 nopadding" id="viewer">
@@ -135,15 +138,16 @@
         // img.src = "https://upload.wikimedia.org/wikipedia/commons/d/d7/Meisje_met_de_parel.jpg"
     };
 
-    function refresh(){
+    function refresh(color = "#ffffff"){
         ctx.scale(1/currentScale,1/currentScale);
         ctx.clearRect(0, 0, c.width, c.height);
         ctxHidden.clearRect(0,0,cHidden.width, cHidden.height);
         ctx.scale(currentScale,currentScale);
         ctx.beginPath();
-// ctx.rect(0,0,c.width,c.height);
-// ctx.fillStyle = "#060513";
-// ctx.fill();
+        ctx.rect(0,0,c.width,c.height);
+        // ctx.fillStyle = "#060513";
+        ctx.fillStyle = color;
+        ctx.fill();
 //         cHidden.width = currentImageData.width;
 //         cHidden.height = currentImageData.height;
         ctxHidden.putImageData(currentImageData,0,0);
