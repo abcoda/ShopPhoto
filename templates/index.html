@@ -90,7 +90,7 @@
                         </div>
                         <h5>Viewer Settings:</h5>
                         Background Color:
-                        <input type="text" value="#ffffff" onchange="refresh(this.value);">
+                        <input type="text" value="#ffffff" onchange="backgroundColor = this.value; refresh();">
                     </div>
                 </div>
                 <div class="col-9 nopadding" id="viewer">
@@ -115,6 +115,7 @@
 <script>
     pixelated = false;
     currentScale = 1;
+    backgroundColor = "#ffffff"
     window.onload = function() {
         c = document.getElementById("c");
         ctx = c.getContext("2d");
@@ -138,7 +139,7 @@
         // img.src = "https://upload.wikimedia.org/wikipedia/commons/d/d7/Meisje_met_de_parel.jpg"
     };
 
-    function refresh(color = "#ffffff"){
+    function refresh(){
         ctx.scale(1/currentScale,1/currentScale);
         ctx.clearRect(0, 0, c.width, c.height);
         ctxHidden.clearRect(0,0,cHidden.width, cHidden.height);
@@ -146,7 +147,7 @@
         ctx.beginPath();
         ctx.rect(0,0,c.width,c.height);
         // ctx.fillStyle = "#060513";
-        ctx.fillStyle = color;
+        ctx.fillStyle = backgroundColor;
         ctx.fill();
 //         cHidden.width = currentImageData.width;
 //         cHidden.height = currentImageData.height;
