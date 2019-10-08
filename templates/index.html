@@ -105,7 +105,7 @@
                             <input type="number" id="animationStep" value = "1"><br>
                             Delay (ms):
                             <input type="number" id="animationDelay" value="0" min="0"><br>
-                            <button type="button" onclick="runAnimation()">Run</button>
+                            <button type="button" onclick="runAnimation()" id="run">Run</button>
                           </div>
                     </div>
                 </div>
@@ -140,8 +140,8 @@
         c.width = c.offsetWidth;
         c.height = c.offsetHeight;
         img = new Image();
+        // img.crossOrigin = "Anonymous";
         img.onload = function(){
-            // img.crossorigin = "anonymous";
             ctx.drawImage(img,0,0);
             cHidden.height = img.height;
             cHidden.width = img.width;
@@ -152,7 +152,8 @@
             pixelate();
         }
         img.src = "../static/pearl.jpg";
-        // img.src = "https://upload.wikimedia.org/wikipedia/commons/d/d7/Meisje_met_de_parel.jpg"
+
+
     };
 
     function refresh(){
@@ -393,16 +394,32 @@
     }
 
     function runAnimation(){
-      var start = document.getElementById("animationStart").value;
-      var finish = document.getElementById("animationEnd").value;
-      var delay = document.getElementById("animationDelay").value;
-      var step = document.getElementById("animationStep").value;
+      document.getElementById("run").disabled = true;
+      var start = Number(document.getElementById("animationStart").value);
+      var finish = Number(document.getElementById("animationEnd").value);
+      var delay = Number(document.getElementById("animationDelay").value);
+      var step = Number(document.getElementById("animationStep").value);
+      var i = 0
+      // for(i = 0; i < (start - finish); i = i + step){
+      //   document.getElementById("blockHeight").value = start;
+      //   document.getElementById("blockWidth").value = start;
+      //   setTimeout(pixelate,delay);
+      // }
+      var temp = setInterval(next,delay);
 
-      for(var i = start; i >= finish; i = i - step){
-        document.getElementById("blockHeight").value = i;
-        document.getElementById("blockWidth").value = i;
-        setTimeout(pixelate,delay);
+      function next(){
+          document.getElementById("blockHeight").value = start - i;
+          document.getElementById("blockWidth").value = start - i;
+          pixelate()
+          i += step;
+          // alert(i)
+          if(i > start - finish){
+            clearInterval(temp);
+            document.getElementById("run").disabled = false;
+          }
       }
+
+
     }
 
     function toggleTable(){
