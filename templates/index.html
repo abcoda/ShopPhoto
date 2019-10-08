@@ -1,72 +1,114 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
 
-{% block title %}
-    Log In
-{% endblock %}
+<html lang="en">
 
-{% block main %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-3 nopadding" id="sidebar">
-            <div class="container-fullheight">
-                <h5>File:</h5>
-                <form id="getFile">
-                    <input type="file" id="imURL" onchange="loadImage(this)" autocomplete="off">
-                </form>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-                <a id="link" ></a>
-                <br><br>
-                <input type="checkbox" id="showTable" onchange="toggleTable()" autocomplete="off"> <label for="showTable"> Show Color Table</label>
-                <br>
-                <h5>Pixelate:</h5>
-                <input type="checkbox" id="square" onchange="toggleSquare(); pixelate();" checked>
-                <label for="square"> Square Boxes</label>
-                <br>
+        <!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
 
-                Pixel Width:
-                <input type="number" min="1" value="1" id="blockWidth" onchange="toggleSquare(); pixelate();" autocomplete="off">
-                <br>
-                Pixel Height:
-                <input type="number" min="1" value="1" id="blockHeight" onchange="toggleSquare(); pixelate();" disabled autocomplete-"off">
-                <br><br>
-                <h5>Palette:</h5>
-                    <input type="radio" id="original" onclick="pixelate()" name="palette" value="original" checked autocomplete="off"> <label for="original">  Original</label><br>
-                    <input type="radio" id="grayscale" onclick="pixelate()" name="palette" value="grayscale" autocomplete="off"> <label for="grayscale">  Grayscale</label><br>
-                           <label id="contrastLabel" for="contrast">Contrast: </label> <a id="contrastValue"></a><br>
-                    <input type="range" id="contrast"
-                        min="-127" max="127" value="0" step="1"
-                        onchange="pixelate()" autocomplete="off" disabled>
+        <!-- https://favicon.io/emoji-favicons/money-mouth-face/ -->
+        <link href="../static/favicon.ico" rel="icon">
 
-                    <br>
-                    <!--<input type="radio" id="black-and-white" onclick="pixelate()" name="palette" value="black-and-white"><label for="black-and-white">  Black and White</label><br>-->
-                    <input type="radio" id="crayola50" onclick="pixelate()" name="palette" value="crayola50" autocomplete="off"> <label for="crayola50">  Crayola</label><br>
-                <br>
-                <div>
-                    <h5>Opacity:</h5>
-                    <!--<label for="volume">Opacity: </label><br>-->
-                    <input type="range" id="opacity"
-                        min="0" max="255" value="255" step="9"
-                        onchange="editOpacity()">
+        <link href="../static/styles.css" rel="stylesheet">
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+        <title> ShopPhoto50 </title>
+    </head>
+
+    <body>
+      <div class="container-fullwidth">
+        <nav class="navbar navbar-expand-sm" id="topbar">
+          <a class="navbar-brand" href="#">ShopPhoto50</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <!--<ul class="navbar-nav">-->
+            <!--  <li class="nav-item">-->
+            <!--    <a class="nav-link" href="#">Link</a>-->
+            <!--  </li>-->
+            <!--  <li class="nav-item">-->
+            <!--    <a class="nav-link" href="#">Link</a>-->
+            <!--  </li>-->
+            <!--  <li class="nav-item">-->
+            <!--    <a class="nav-link" href="#">Link</a>-->
+            <!--  </li>-->
+            <!--</ul>-->
+          </div>
+        </nav>
+      </div>
+      <main class="main">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3 nopadding" id="sidebar">
+                    <div class="container-fullheight">
+                        <h5>File:</h5>
+                        <form id="getFile">
+                            <input type="file" id="imURL" onchange="loadImage(this)" autocomplete="off">
+                        </form>
+
+                        <a id="link" ></a>
+                        <br><br>
+                        <input type="checkbox" id="showTable" onchange="toggleTable()" autocomplete="off"> <label for="showTable"> Show Color Table</label>
+                        <br>
+                        <h5>Pixelate:</h5>
+                        <input type="checkbox" id="square" onchange="toggleSquare(); pixelate();" checked>
+                        <label for="square"> Square Boxes</label>
+                        <br>
+
+                        Pixel Width:
+                        <input type="number" min="1" value="1" id="blockWidth" onchange="toggleSquare(); pixelate();" autocomplete="off">
+                        <br>
+                        Pixel Height:
+                        <input type="number" min="1" value="1" id="blockHeight" onchange="toggleSquare(); pixelate();" disabled autocomplete-"off">
+                        <br><br>
+                        <h5>Palette:</h5>
+                            <input type="radio" id="original" onclick="pixelate()" name="palette" value="original" checked autocomplete="off"> <label for="original">  Original</label><br>
+                            <input type="radio" id="grayscale" onclick="pixelate()" name="palette" value="grayscale" autocomplete="off"> <label for="grayscale">  Grayscale</label><br>
+                                   <label id="contrastLabel" for="contrast">Contrast: </label> <a id="contrastValue"></a><br>
+                            <input type="range" id="contrast"
+                                min="-127" max="127" value="0" step="1"
+                                onchange="pixelate()" autocomplete="off" disabled>
+
+                            <br>
+                            <!--<input type="radio" id="black-and-white" onclick="pixelate()" name="palette" value="black-and-white"><label for="black-and-white">  Black and White</label><br>-->
+                            <input type="radio" id="crayola50" onclick="pixelate()" name="palette" value="crayola50" autocomplete="off"> <label for="crayola50">  Crayola</label><br>
+                        <br>
+                        <div>
+                            <h5>Opacity:</h5>
+                            <!--<label for="volume">Opacity: </label><br>-->
+                            <input type="range" id="opacity"
+                                min="0" max="255" value="255" step="9"
+                                onchange="editOpacity()">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-9 nopadding" id="viewer">
+                    <div id="picture">
+                        <canvas id="c">
+                        Your browser does not support the HTML5 canvas tag.
+                        </canvas>
+                    </div>
+                    <div>
+                        <table id="data"></table>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-9 nopadding" id="viewer">
-            <div id="picture">
-                <canvas id="c">
-                Your browser does not support the HTML5 canvas tag.
-                </canvas>
-            </div>
-            <div>
-                <table id="data"></table>
-            </div>
-        </div>
-    </div>
-</div>
+      </main>
+
+      <footer class="small text-center text-muted">
+
+      </footer>
 
 
-{% endblock %}
-
-{% block script %}
 <script>
     pixelated = false;
     currentScale = 1;
@@ -79,6 +121,7 @@
         c.height = c.offsetHeight;
         img = new Image();
         img.onload = function(){
+            // img.crossorigin = "anonymous";
             ctx.drawImage(img,0,0);
             cHidden.height = img.height;
             cHidden.width = img.width;
@@ -88,7 +131,8 @@
             toggleSquare();
             pixelate();
         }
-        img.src = "/static/pearl.jpg";
+        img.src = "../static/pearl.jpg";
+        // img.src = "https://upload.wikimedia.org/wikipedia/commons/d/d7/Meisje_met_de_parel.jpg"
     };
 
     function refresh(){
@@ -371,63 +415,6 @@
 		c.addEventListener('DOMMouseScroll',handleScroll,false);
 		c.addEventListener('mousewheel',handleScroll,false);
 
-// 		function trackTransforms(ctx){
-// 		var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
-// 		var xform = svg.createSVGMatrix();
-// 		ctx.getTransform = function(){ return xform; };
-
-// 		var savedTransforms = [];
-// 		var save = ctx.save;
-// 		ctx.save = function(){
-// 			savedTransforms.push(xform.translate(0,0));
-// 			return save.call(ctx);
-// 		};
-// 		var restore = ctx.restore;
-// 		ctx.restore = function(){
-// 			xform = savedTransforms.pop();
-// 			return restore.call(ctx);
-// 		};
-
-// 		var scale = ctx.scale;
-// 		ctx.scale = function(sx,sy){
-// 			xform = xform.scaleNonUniform(sx,sy);
-// 			return scale.call(ctx,sx,sy);
-// 		};
-// 		var rotate = ctx.rotate;
-// 		ctx.rotate = function(radians){
-// 			xform = xform.rotate(radians*180/Math.PI);
-// 			return rotate.call(ctx,radians);
-// 		};
-// 		var translate = ctx.translate;
-// 		ctx.translate = function(dx,dy){
-// 			xform = xform.translate(dx,dy);
-// 			return translate.call(ctx,dx,dy);
-// 		};
-// 		var transform = ctx.transform;
-// 		ctx.transform = function(a,b,c,d,e,f){
-// 			var m2 = svg.createSVGMatrix();
-// 			m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
-// 			xform = xform.multiply(m2);
-// 			return transform.call(ctx,a,b,c,d,e,f);
-// 		};
-// 		var setTransform = ctx.setTransform;
-// 		ctx.setTransform = function(a,b,c,d,e,f){
-// 			xform.a = a;
-// 			xform.b = b;
-// 			xform.c = c;
-// 			xform.d = d;
-// 			xform.e = e;
-// 			xform.f = f;
-// 			return setTransform.call(ctx,a,b,c,d,e,f);
-// 		};
-// 		var pt  = svg.createSVGPoint();
-// 		ctx.transformedPoint = function(x,y){
-// 			pt.x=x; pt.y=y;
-// 			return pt.matrixTransform(xform.inverse());
-// 		}
-// 	}
-
-
 crayola50 = [
         [190, 45, 94],[161, 56, 90], [241, 38, 55], [240, 76, 42],[250, 127, 65],
         [250, 191, 136], [251, 155, 51], [250, 200, 106], [242, 227, 59], [253, 236, 16],
@@ -447,4 +434,9 @@ for(i = 0; i < 50; i++){
 
 
 </script>
-{% endblock %}
+
+
+</body>
+
+
+</html>
