@@ -257,6 +257,9 @@
         cutWidth = imageData.width - width;
         cutHeight = imageData.height - height;
 
+        cHidden.width = img.width - cutWidth;
+        cHidden.height = img.height - cutHeight;
+
         var temp = new ImageData(width, height);
 
         newData = [];
