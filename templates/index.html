@@ -57,7 +57,7 @@
                         <a id="link" ></a>
                         <br><br>
                         <input type="checkbox" id="showTable" onchange="toggleTable()" autocomplete="off"> <label for="showTable"> Show Color Table</label>
-                        <br>
+
                         <h5>Pixelate:</h5>
                         <input type="checkbox" id="square" onchange="toggleSquare(); pixelate();" checked>
                         <label for="square"> Square Boxes</label>
@@ -89,8 +89,22 @@
                                 onchange="editOpacity()">
                         </div>
                         <h5>Viewer Settings:</h5>
-                        Background Color:
-                        <input type="text" value="#ffffff" onchange="document.getElementById('picture').style.backgroundColor=this.value">
+                          Background Color:
+                          <input type="text" value="#ffffff" onchange="document.getElementById('picture').style.backgroundColor=this.value">
+                          <br>
+                          <input type="checkbox" id="showTable" onchange="toggleTable()" autocomplete="off"> <label for="showTable"> Show Color Table</label>
+                        <h5>Animation:</h5>
+                          <div>
+                            Starting Block Size:
+                            <input type="number" id="animationStart" value="1" min="1">
+                            End Block Size:
+                            <input type="number" id="animationEnd" value="1" min="1">
+                            Step Size:
+                            <input type="number" id="animationStep" value = "1">
+                            Delay (ms):
+                            <input type="number" id="animationDelay" value="0" min="0">
+                            <button type="button" onclick="runAnimation();">Run</button>
+                          </div>
                     </div>
                 </div>
                 <div class="col-9 nopadding" id="viewer">
@@ -374,6 +388,19 @@
         document.getElementById("showTable").checked = false;
         toggleTable();
         refresh();
+    }
+
+    function runAnimation(){
+      var start = document.getElementById("animationStart").value;
+      var finish = document.getElementById("animationEnd").value;
+      var delay = document.getElementById("animationDelay").value;
+      var step = document.getElementById("animationStep").value;
+
+      for(var i = start; i >= finish; i = i - step){
+        document.getElementById("blockHeight").value = i;
+        document.getElementById("blockwidth").value = i;
+        setTimeout(pixelate,delay);
+      }
     }
 
     function toggleTable(){
