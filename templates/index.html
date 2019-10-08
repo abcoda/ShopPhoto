@@ -1,0 +1,450 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-3 nopadding" id="sidebar">
+            <div class="container-fullheight">
+                <h5>File:</h5>
+                <form id="getFile">
+                    <input type="file" id="imURL" onchange="loadImage(this)" autocomplete="off">
+                </form>
+
+                <a id="link" ></a>
+                <br><br>
+                <input type="checkbox" id="showTable" onchange="toggleTable()" autocomplete="off"> <label for="showTable"> Show Color Table</label>
+                <br>
+                <h5>Pixelate:</h5>
+                <input type="checkbox" id="square" onchange="toggleSquare(); pixelate();" checked>
+                <label for="square"> Square Boxes</label>
+                <br>
+
+                Pixel Width:
+                <input type="number" min="1" value="1" id="blockWidth" onchange="toggleSquare(); pixelate();" autocomplete="off">
+                <br>
+                Pixel Height:
+                <input type="number" min="1" value="1" id="blockHeight" onchange="toggleSquare(); pixelate();" disabled autocomplete-"off">
+                <br><br>
+                <h5>Palette:</h5>
+                    <input type="radio" id="original" onclick="pixelate()" name="palette" value="original" checked autocomplete="off"> <label for="original">  Original</label><br>
+                    <input type="radio" id="grayscale" onclick="pixelate()" name="palette" value="grayscale" autocomplete="off"> <label for="grayscale">  Grayscale</label><br>
+                           <label id="contrastLabel" for="contrast">Contrast: </label> <a id="contrastValue"></a><br>
+                    <input type="range" id="contrast"
+                        min="-127" max="127" value="0" step="1"
+                        onchange="pixelate()" autocomplete="off" disabled>
+
+                    <br>
+                    <!--<input type="radio" id="black-and-white" onclick="pixelate()" name="palette" value="black-and-white"><label for="black-and-white">  Black and White</label><br>-->
+                    <input type="radio" id="crayola50" onclick="pixelate()" name="palette" value="crayola50" autocomplete="off"> <label for="crayola50">  Crayola</label><br>
+                <br>
+                <div>
+                    <h5>Opacity:</h5>
+                    <!--<label for="volume">Opacity: </label><br>-->
+                    <input type="range" id="opacity"
+                        min="0" max="255" value="255" step="9"
+                        onchange="editOpacity()">
+                </div>
+            </div>
+        </div>
+        <div class="col-9 nopadding" id="viewer">
+            <div id="picture">
+                <canvas id="c">
+                Your browser does not support the HTML5 canvas tag.
+                </canvas>
+            </div>
+            <div>
+                <table id="data"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    pixelated = false;
+    currentScale = 1;
+    window.onload = function() {
+        c = document.getElementById("c");
+        ctx = c.getContext("2d");
+        cHidden = document.createElement("canvas");
+        ctxHidden = cHidden.getContext("2d");
+        c.width = c.offsetWidth;
+        c.height = c.offsetHeight;
+        img = new Image();
+        img.onload = function(){
+            ctx.drawImage(img,0,0);
+            cHidden.height = img.height;
+            cHidden.width = img.width;
+            ctxHidden.drawImage(img,0,0);
+            imageData = ctxHidden.getImageData(0,0,img.width, img.height);
+            currentImageData = ctxHidden.getImageData(0,0,img.width, img.height);
+            toggleSquare();
+            pixelate();
+        }
+        img.src = "/static/pearl.jpg";
+    };
+
+    function refresh(){
+        ctx.scale(1/currentScale,1/currentScale);
+        ctx.clearRect(0, 0, c.width, c.height);
+        ctxHidden.clearRect(0,0,cHidden.width, cHidden.height);
+        ctx.scale(currentScale,currentScale);
+        ctx.beginPath();
+// ctx.rect(0,0,c.width,c.height);
+// ctx.fillStyle = "#060513";
+// ctx.fill();
+//         cHidden.width = currentImageData.width;
+//         cHidden.height = currentImageData.height;
+        ctxHidden.putImageData(currentImageData,0,0);
+        ctx.drawImage(cHidden,0,0);
+        final = cHidden.toDataURL("final.png");
+        document.getElementById("link").href = final;
+        document.getElementById("link").innerHTML = " Download Current Image";
+    }
+
+
+    function loadImage(input){
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            };
+
+            reader.readAsDataURL(input.files[0]);
+            ctx.clearRect(0, 0, c.width, c.height);
+            ctxHidden.clearRect(0,0,cHidden.width, cHidden.height);
+
+
+            cHidden.width = img.width;
+            cHidden.height = img.height;
+            ctx.drawImage(img,0,0);
+            imageData = ctxHidden.getImageData(0,0,img.width, img.height);
+            currentImageData = ctxHidden.getImageData(0,0,img.width, img.height);
+
+            document.getElementById("blockWidth").value = 1;
+            document.getElementById("blockHeight").value = 1;
+            toggleSquare();
+        }
+        document.getElementById("opacity").value = "255";
+        document.getElementById("showTable").checked = false;
+        document.getElementById("original").checked = true;
+        pixelate();
+
+    }
+
+    function toggleSquare(){
+        var max;
+        if (document.getElementById("square").checked){
+            document.getElementById("blockHeight").disabled = true;
+            document.getElementById("blockHeight").value = document.getElementById("blockWidth").value;
+            if(img.width>img.height){
+                max = img.height;
+                document.getElementById("blockWidth").max=max;
+                document.getElementById("blockHeight").max=max;
+            }
+            else{
+                max = img.width;
+                document.getElementById("blockWidth").max=max;
+                document.getElementById("blockHeight").max=max;
+            }
+            if(document.getElementById("blockHeight").value > max){
+                document.getElementById("blockHeight").value = document.getElementById("blockWidth").value = max;
+            }
+        }
+        else {
+            document.getElementById("blockHeight").disabled = false;
+            var maxW=img.width;
+            var maxH=img.height;
+            document.getElementById("blockWidth").max=maxW;
+            document.getElementById("blockHeight").max=maxH;
+            if(document.getElementById("blockHeight").value > maxH){
+                document.getElementById("blockHeight").value = maxH;
+            }
+            if(document.getElementById("blockWidth").value > maxW){
+                document.getElementById("blockWidth").value = maxW;
+            }
+        }
+        if(document.getElementById("blockWidth").value < 1){
+            document.getElementById("blockWidth").value = 1;
+        }
+        if(document.getElementById("blockHeight").value < 1){
+            document.getElementById("blockHeight").value = 1;
+        }
+    }
+
+    //actually changes the original image data
+    function editOpacity(){
+        var opacity = document.getElementById("opacity").value;
+
+        for(i = 3; i < currentImageData.data.length; i = i + 4){
+            currentImageData.data[i] = opacity;
+            imageData.data[i] = opacity;
+
+        }
+        refresh();
+    }
+
+    function pixelate(){
+        pixelTable = [];
+        if(document.getElementById("grayscale").checked){
+            document.getElementById("contrast").disabled = false;
+        }
+        else{
+            document.getElementById("contrast").desabled = true;
+            document.getElementById("contrast").value = 0;
+        }
+        document.getElementById("contrastValue").innerHTML = document.getElementById("contrast").value;
+        blockWidth = document.getElementById("blockWidth").value;
+        blockHeight = document.getElementById("blockHeight").value;
+        height = imageData.height
+        width = imageData.width;
+        blocksHigh = Math.trunc(height/blockHeight);
+        blocksWide = Math.trunc(width/blockWidth);
+        height = blocksHigh*blockHeight;
+        width = blocksWide*blockWidth;
+        cutWidth = imageData.width - width;
+        cutHeight = imageData.height - height;
+
+        var temp = new ImageData(width, height);
+
+        newData = [];
+        var count = 0;
+
+        for(j = 0; j < height; j++){
+            for(i = 0; i < width; i++){
+                newData.push([imageData.data[count],imageData.data[count+1],imageData.data[count+2],imageData.data[count+3]]);
+                count += 4;
+            }
+            count += 4*cutWidth;
+        }
+
+        for(i = 0; i < blocksWide; i++){
+            pixelTable[i] = [];
+            for(j = 0; j < blocksHigh; j++){
+                r = g = b = 0;
+                for(k = i*blockWidth; k < (i+1)*blockWidth; k++){
+                    for(m = j*blockHeight; m < (j+1)*blockHeight; m++){
+                        pixel = m*width + k;
+                        r += newData[pixel][0];
+                        g += newData[pixel][1];
+                        b += newData[pixel][2];
+                    }
+                }
+                rAvg = Math.round(r/(blockWidth*blockHeight));
+                gAvg = Math.round(g/(blockWidth*blockHeight));
+                bAvg = Math.round(b/(blockWidth*blockHeight));
+
+                if(document.getElementById("grayscale").checked){
+                    rAvg = gAvg = bAvg = Math.round(0.2989*rAvg + 0.5870*gAvg + 0.1140*bAvg);
+                    // alert(document.getElementById("contrast").value);
+                    if(document.getElementById("contrast").value != 0){
+                        if(rAvg < 127){
+                            rAvg = gAvg = bAvg = rAvg - document.getElementById("contrast").value
+                            if(rAvg < 0){
+                                rAvg = gAvg = bAvg = 0;
+                            }
+                            else if (rAvg > 127){
+                                rAvg = gAvg = bAvg = 127;
+                            }
+                        }
+                        else if(rAvg > 127){
+                            // alert(document.getElementById("contrast").value);
+                            // alert(rAvg);
+                            // alert(document.getElementById("contrast").value + rAvg);
+                            rAvg = gAvg = bAvg = +rAvg + +document.getElementById("contrast").value////////////
+                            if(rAvg > 255){
+                                rAvg = gAvg = bAvg = 255;
+                            }
+                            else if(rAvg < 127){
+                                rAvg = gAvg = bAvg = 127;
+                            }
+                        }
+                    }
+                }
+                else if(document.getElementById("crayola50").checked){
+                    minDif = 5000;
+                    minInd = 50;
+                    rdifs = [];
+                    gdifs = [];
+                    bdifs = [];
+                    for (p = 0; p < 50; p++){
+                        rdifs[p] = Math.abs(rAvg - crayola50[p][0][0]);
+                        gdifs[p] = Math.abs(gAvg - crayola50[p][0][1]);
+                        bdifs[p] = Math.abs(bAvg - crayola50[p][0][2]);
+                        difTotal = rdifs[p] + gdifs[p] + bdifs[p];
+
+
+                        if (difTotal < minDif){
+                            minDif = difTotal;
+                            minInd = p;
+                        }
+                    }
+                    rAvg = crayola50[minInd][0][0];
+                    gAvg = crayola50[minInd][0][1];
+                    bAvg = crayola50[minInd][0][2];
+                }
+
+
+                //each array in pixelTable is a COLUMN
+                if(document.getElementById("crayola50").checked){
+                    pixelTable[i][j]=crayola50[minInd][1] + 1;
+                }
+                else{
+                    pixelTable[i][j]=[rAvg,gAvg,bAvg];
+                }
+                for(k = i*blockWidth; k < (i+1)*blockWidth; k++){
+                    for(m = j*blockHeight; m < (j+1)*blockHeight; m++){
+                        pixel = m*width + k;
+                        newData[pixel][0] = rAvg;
+                        newData[pixel][1] = gAvg;
+                        newData[pixel][2] = bAvg;
+                    }
+                }
+            }
+        }
+
+        for(i = 0; i < newData.length; i++){
+            for(j = 0; j < 4; j++){
+                temp.data[i*4 + j] = newData[i][j];
+            }
+        }
+
+        currentImageData = temp;
+        pixelated = true;
+        document.getElementById("showTable").checked = false;
+        toggleTable();
+        refresh();
+    }
+
+    function toggleTable(){
+        var table;
+        if(document.getElementById("showTable").checked){
+            document.getElementById("data").style.display = "inline";
+            document.getElementById("picture").style.display = "none";
+            document.getElementById("viewer").style.overflow = "scroll";
+            if(pixelated){
+                tableData = pixelTable;
+            }
+            else{
+                //TO DO
+            }
+            table = document.getElementById("data");
+            table.innerHTML = "";
+            for(i = 0; i < tableData[0].length; i++){
+                var row = document.createElement("tr");
+                for(j = 0; j < tableData.length; j++){
+                    var cell = document.createElement("td");
+                    cell.appendChild(document.createTextNode(tableData[j][i]));
+                    row.appendChild(cell);
+                }
+                data.appendChild(row);
+            }
+        }
+        else{
+            document.getElementById("data").style.display = "none";
+            document.getElementById("picture").style.display = "";
+            document.getElementById("viewer").style.overflow = "hidden";
+        }
+    }
+
+        var scaleFactor = 1.05;
+		var zoom = function(clicks){
+			var factor = Math.pow(scaleFactor,clicks);
+			currentScale *= factor;
+			ctx.scale(factor,factor);
+            refresh();
+		}
+
+		var handleScroll = function(evt){
+			var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
+			if (delta) zoom(delta);
+			return evt.preventDefault() && false;
+		};
+		c.addEventListener('DOMMouseScroll',handleScroll,false);
+		c.addEventListener('mousewheel',handleScroll,false);
+
+// 		function trackTransforms(ctx){
+// 		var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
+// 		var xform = svg.createSVGMatrix();
+// 		ctx.getTransform = function(){ return xform; };
+
+// 		var savedTransforms = [];
+// 		var save = ctx.save;
+// 		ctx.save = function(){
+// 			savedTransforms.push(xform.translate(0,0));
+// 			return save.call(ctx);
+// 		};
+// 		var restore = ctx.restore;
+// 		ctx.restore = function(){
+// 			xform = savedTransforms.pop();
+// 			return restore.call(ctx);
+// 		};
+
+// 		var scale = ctx.scale;
+// 		ctx.scale = function(sx,sy){
+// 			xform = xform.scaleNonUniform(sx,sy);
+// 			return scale.call(ctx,sx,sy);
+// 		};
+// 		var rotate = ctx.rotate;
+// 		ctx.rotate = function(radians){
+// 			xform = xform.rotate(radians*180/Math.PI);
+// 			return rotate.call(ctx,radians);
+// 		};
+// 		var translate = ctx.translate;
+// 		ctx.translate = function(dx,dy){
+// 			xform = xform.translate(dx,dy);
+// 			return translate.call(ctx,dx,dy);
+// 		};
+// 		var transform = ctx.transform;
+// 		ctx.transform = function(a,b,c,d,e,f){
+// 			var m2 = svg.createSVGMatrix();
+// 			m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
+// 			xform = xform.multiply(m2);
+// 			return transform.call(ctx,a,b,c,d,e,f);
+// 		};
+// 		var setTransform = ctx.setTransform;
+// 		ctx.setTransform = function(a,b,c,d,e,f){
+// 			xform.a = a;
+// 			xform.b = b;
+// 			xform.c = c;
+// 			xform.d = d;
+// 			xform.e = e;
+// 			xform.f = f;
+// 			return setTransform.call(ctx,a,b,c,d,e,f);
+// 		};
+// 		var pt  = svg.createSVGPoint();
+// 		ctx.transformedPoint = function(x,y){
+// 			pt.x=x; pt.y=y;
+// 			return pt.matrixTransform(xform.inverse());
+// 		}
+// 	}
+
+
+crayola50 = [
+        [190, 45, 94],[161, 56, 90], [241, 38, 55], [240, 76, 42],[250, 127, 65],
+        [250, 191, 136], [251, 155, 51], [250, 200, 106], [242, 227, 59], [253, 236, 16],
+         [249, 245, 101], [179, 218, 153], [134, 206, 124], [140, 185, 123], [34, 176, 102],
+          [31, 122, 94], [91, 164, 160], [51, 128, 137], [76, 188, 172], [92, 198, 198],
+         [12, 159, 214], [19, 121, 197], [98, 132, 195], [40, 108, 166], [48, 61, 113],
+          [83, 52, 134], [194, 112, 175], [184, 120, 137], [192, 167, 173], [242, 156, 194],
+           [223, 60, 167], [248, 178, 197], [250, 173, 165], [240, 197, 132], [175, 111, 71],
+            [146, 65, 43], [133, 88, 51], [81, 66, 46], [183, 153, 122], [229, 204, 160],
+         [219, 173, 108], [228, 187, 98], [179, 158, 68], [161, 154, 87], [156, 152, 153],
+          [122, 122, 122], [103, 125, 113], [120, 135, 148], [24, 24, 24],[255,255,255]
+    ];
+
+for(i = 0; i < 50; i++){
+    crayola50[i] = [crayola50[i],i];
+}
+
+
+</script>
+{% endblock %}
