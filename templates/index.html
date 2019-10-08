@@ -90,7 +90,7 @@
                         </div>
                         <h5>Viewer Settings:</h5>
                         Background Color:
-                        <input type="text" value="#ffffff" onchange="backgroundColor = this.value; refresh();">
+                        <input type="text" value="#ffffff" onchange="document.getElementById("picture").style.background-color=this.value">
                     </div>
                 </div>
                 <div class="col-9 nopadding" id="viewer">
@@ -115,7 +115,7 @@
 <script>
     pixelated = false;
     currentScale = 1;
-    backgroundColor = "#ffffff"
+    // backgroundColor = "#ffffff"
     window.onload = function() {
         c = document.getElementById("c");
         ctx = c.getContext("2d");
@@ -144,11 +144,11 @@
         ctx.clearRect(0, 0, c.width, c.height);
         ctxHidden.clearRect(0,0,cHidden.width, cHidden.height);
         ctx.scale(currentScale,currentScale);
-        ctx.beginPath();
-        ctx.rect(0,0,c.width,c.height);
-        // ctx.fillStyle = "#060513";
-        ctx.fillStyle = backgroundColor;
-        ctx.fill();
+        // ctx.beginPath();
+        // ctx.rect(0,0,c.width,c.height);
+        // // ctx.fillStyle = "#060513";
+        // ctx.fillStyle = backgroundColor;
+        // ctx.fill();
 //         cHidden.width = currentImageData.width;
 //         cHidden.height = currentImageData.height;
         ctxHidden.putImageData(currentImageData,0,0);
