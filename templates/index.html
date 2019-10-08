@@ -56,7 +56,7 @@
 
                         <a id="link" ></a>
                         <br><br>
-                        <input type="checkbox" id="showTable" onchange="toggleTable()" autocomplete="off"> <label for="showTable"> Show Color Table</label>
+                        <!-- <input type="checkbox" id="showTable" onchange="toggleTable()" autocomplete="off"> <label for="showTable"> Show Color Table</label> -->
 
                         <h5>Pixelate:</h5>
                         <input type="checkbox" id="square" onchange="toggleSquare(); pixelate();" checked>
@@ -87,12 +87,14 @@
                             <input type="range" id="opacity"
                                 min="0" max="255" value="255" step="9"
                                 onchange="editOpacity()">
+                            <br>
                         </div>
                         <h5>Viewer Settings:</h5>
                           Background Color:
                           <input type="text" value="#ffffff" onchange="document.getElementById('picture').style.backgroundColor=this.value">
                           <br>
                           <input type="checkbox" id="showTable" onchange="toggleTable()" autocomplete="off"> <label for="showTable"> Show Color Table</label>
+                          <br>
                         <h5>Animation:</h5>
                           <div>
                             Starting Block Size:
@@ -398,7 +400,7 @@
 
       for(var i = start; i >= finish; i = i - step){
         document.getElementById("blockHeight").value = i;
-        document.getElementById("blockwidth").value = i;
+        document.getElementById("blockWidth").value = i;
         setTimeout(pixelate,delay);
       }
     }
