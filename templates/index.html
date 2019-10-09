@@ -67,7 +67,7 @@
                         <input type="number" min="1" value="1" id="blockWidth" onchange="toggleSquare(); pixelate();" autocomplete="off">
                         <br>
                         Pixel Height:
-                        <input type="number" min="1" value="1" id="blockHeight" onchange="toggleSquare(); pixelate();" disabled autocomplete-"off">
+                        <input type="number" min="1" value="1" id="blockHeight" onchange="toggleSquare(); pixelate();" disabled autocomplete="off">
                         <br><br>
                         <h5>Palette:</h5>
                             <input type="radio" id="original" onclick="pixelate()" name="palette" value="original" checked autocomplete="off"> <label for="original">  Original</label><br>
@@ -87,14 +87,14 @@
                             <input type="range" id="opacity"
                                 min="0" max="255" value="255" step="9"
                                 onchange="editOpacity()">
-                            <br>
+                            <br><br>
                         </div>
                         <h5>Viewer Settings:</h5>
                           Background Color:
-                          <input type="text" value="#ffffff" onchange="document.getElementById('picture').style.backgroundColor=this.value">
+                          <br>#<input type="text" size="6" value="ffffff" onchange="document.getElementById('picture').style.backgroundColor='#' + this.value" autocomplete="off">
                           <br>
                           <input type="checkbox" id="showTable" onchange="toggleTable()" autocomplete="off"> <label for="showTable"> Show Color Table</label>
-                          <br>
+                          <br><br>
                         <h5>Animation:</h5>
                           <div>
                             Starting Block Size:
