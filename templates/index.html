@@ -80,6 +80,7 @@
                             <br>
                             <!--<input type="radio" id="black-and-white" onclick="pixelate()" name="palette" value="black-and-white"><label for="black-and-white">  Black and White</label><br>-->
                             <input type="radio" id="crayola50" onclick="pixelate()" name="palette" value="crayola50" autocomplete="off"> <label for="crayola50">  Crayola</label><br>
+                            <input type="radio" id="prismacolor48" onclick="pixelate()" name="palette" value="prismacolor48" autocomplete="off"> <label for="prismacolor48">  Prismacolor48</label><br>
                         <br>
                         <div>
                             <h5>Opacity:</h5>
@@ -338,16 +339,24 @@
                         }
                     }
                 }
-                else if(document.getElementById("crayola50").checked){
+                else if(document.getElementById("crayola50").checked || document.getElementById("prismacolor48").checked){
+                    if(document.getElementById("crayola50").checked){
+                        minInd = 50;
+                        colors = crayola50;
+                    }
+                    else if(document.getElementById("prismacolor48").checked){
+                        minInd = 48;
+                        colors = prismacolor48;
+                    }
+
                     minDif = 5000;
-                    minInd = 50;
                     rdifs = [];
                     gdifs = [];
                     bdifs = [];
-                    for (p = 0; p < 50; p++){
-                        rdifs[p] = Math.abs(rAvg - crayola50[p][0][0]);
-                        gdifs[p] = Math.abs(gAvg - crayola50[p][0][1]);
-                        bdifs[p] = Math.abs(bAvg - crayola50[p][0][2]);
+                    for (p = 0; p < colors.length; p++){
+                        rdifs[p] = Math.abs(rAvg - colors[p][0][0]);
+                        gdifs[p] = Math.abs(gAvg - colors[p][0][1]);
+                        bdifs[p] = Math.abs(bAvg - colors[p][0][2]);
                         difTotal = rdifs[p] + gdifs[p] + bdifs[p];
 
 
@@ -356,15 +365,18 @@
                             minInd = p;
                         }
                     }
-                    rAvg = crayola50[minInd][0][0];
-                    gAvg = crayola50[minInd][0][1];
-                    bAvg = crayola50[minInd][0][2];
+                    rAvg = colors[minInd][0][0];
+                    gAvg = colors[minInd][0][1];
+                    bAvg = colors[minInd][0][2];
                 }
 
 
                 //each array in pixelTable is a COLUMN
                 if(document.getElementById("crayola50").checked){
-                    pixelTable[i][j]=crayola50[minInd][1] + 1;
+                    pixelTable[i][j]=colors[minInd][1] + 1;
+                }
+                else if(document.getElementById("prismacolor48").checked){
+                    pixelTable[i][j]=colors[minInd][1] + 1;
                 }
                 else{
                     pixelTable[i][j]=[rAvg,gAvg,bAvg];
@@ -484,6 +496,26 @@ crayola50 = [
 
 for(i = 0; i < 50; i++){
     crayola50[i] = [crayola50[i],i];
+}
+
+prismacolor48 = [
+        [250, 234, 200],[224, 223, 156],[255, 249, 99],[255, 171, 81],
+        [238, 184, 98],[251, 208, 67],[230, 166, 66],[249, 130, 64],
+        [244, 113, 69],[242, 70, 50],[210, 57, 49],[186, 29, 24],
+        [218, 39, 60], [221, 59, 84],[134, 47, 82], [254, 133, 140],
+        [245, 194, 163],[245, 209, 175],[240, 181, 139],[198, 151, 210],
+        [112, 76, 165],[65, 30, 84],[42, 28, 177],[21, 33, 105],
+        [8, 128, 204],[159, 189, 242],[1, 87, 122],[19, 31, 71],
+        [20, 199, 187],[13, 150, 157],[211, 238, 13],[191, 191, 93],
+        [166, 224, 61],[127, 201, 88],[31, 191, 105],[31, 108, 55],
+        [50, 55, 1],[9, 37, 22],[135, 98, 68],[168, 71, 39],
+        [137, 84, 67],[94, 19, 24],[84, 65, 51],[61, 30, 1],
+        [15, 15, 15],[248, 243, 250],[160, 160, 160],[204, 177, 100],
+
+    ];
+
+for(i = 0; i < 48; i++){
+    prismacolor48[i] = [prismacolor48[i],i];
 }
 
 
