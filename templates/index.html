@@ -81,6 +81,7 @@
                             <!--<input type="radio" id="black-and-white" onclick="pixelate()" name="palette" value="black-and-white"><label for="black-and-white">  Black and White</label><br>-->
                             <input type="radio" id="crayola50" onclick="pixelate()" name="palette" value="crayola50" autocomplete="off"> <label for="crayola50">  Crayola</label><br>
                             <input type="radio" id="prismacolor48" onclick="pixelate()" name="palette" value="prismacolor48" autocomplete="off"> <label for="prismacolor48">  Prismacolor48</label><br>
+                            <input type="radio" id="crayprisma" onclick="pixelate()" name="palette" value="crayprisma" autocomplete="off"> <label for="crayprisma">  Crayola & Prisma</label><br>
                         <br>
                         <div>
                             <h5>Opacity:</h5>
@@ -339,16 +340,20 @@
                         }
                     }
                 }
-                else if(document.getElementById("crayola50").checked || document.getElementById("prismacolor48").checked){
+                else if(document.getElementById("crayola50").checked || document.getElementById("prismacolor48").checked || document.getElementById("crayprisma").checked){
                     if(document.getElementById("crayola50").checked){
-                        minInd = 50;
+                        //minInd = 50;
                         colors = crayola50;
                     }
                     else if(document.getElementById("prismacolor48").checked){
-                        minInd = 48;
+                        //minInd = 48;
                         colors = prismacolor48;
                     }
+                    else if(document.getElementById("crayprisma").checked){
+                        colors = crayola50.concat(prismacolor48);
+                    }
 
+                    minInd = colors.length;
                     minDif = 5000;
                     rdifs = [];
                     gdifs = [];
@@ -377,6 +382,9 @@
                 }
                 else if(document.getElementById("prismacolor48").checked){
                     pixelTable[i][j]=colors[minInd][1] + 1;
+                }
+                else if(document.getElementById("crayprisma").checked){
+                    pixelTable[i][j]=colors[minInd][2] + (colors[minInd][1] + 1);
                 }
                 else{
                     pixelTable[i][j]=[rAvg,gAvg,bAvg];
@@ -495,7 +503,7 @@ crayola50 = [
     ];
 
 for(i = 0; i < 50; i++){
-    crayola50[i] = [crayola50[i],i];
+    crayola50[i] = [crayola50[i],i,"C"];
 }
 
 prismacolor48 = [
@@ -515,7 +523,7 @@ prismacolor48 = [
     ];
 
 for(i = 0; i < 48; i++){
-    prismacolor48[i] = [prismacolor48[i],i];
+    prismacolor48[i] = [prismacolor48[i],i,"P"];
 }
 
 
